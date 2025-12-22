@@ -63,12 +63,12 @@ export const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ onNavigate, on
   ];
 
   return (
-    <div className="min-h-screen pb-20 relative z-10">
+    <div className="min-h-screen pb-20 relative">
       {/* Header */}
-      <div className={`backdrop-blur-sm border-b px-6 py-4 ${
+      <div className={`backdrop-blur-md border-b px-6 py-4 ${
         isDarkMode 
-          ? 'bg-dark-bg-light/90 border-dark-bg-lighter/50' 
-          : 'bg-white/90 border-logo-blue-lightest/50'
+          ? 'bg-black/20 border-white/10' 
+          : 'bg-white/20 border-gray-900/10'
       }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -115,8 +115,8 @@ export const PlayerDashboard: React.FC<PlayerDashboardProps> = ({ onNavigate, on
                 onClick={() => onNavigate(card.id as Page)}
                 className={`backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 cursor-pointer border ${
                   isDarkMode 
-                    ? 'bg-dark-bg-light/90 border-dark-bg-lighter' 
-                    : 'bg-white/90 border-gray-100'
+                    ? 'bg-black/20 border-white/10' 
+                    : 'bg-white/20 border-gray-900/10'
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >

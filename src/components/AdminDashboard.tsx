@@ -72,7 +72,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLo
   ];
 
   return (
-    <div className="min-h-screen relative z-10">
+    <div className="min-h-screen relative">
       {/* Header */}
       <div className="bg-gradient-to-r from-logo-blue to-logo-blue-light text-white px-6 py-8">
         <div className="flex items-center justify-between">
@@ -101,7 +101,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLo
       </div>
 
       {/* Stats Overview */}
-      <div className="px-6 py-6 bg-white">
+      <div className={`px-6 py-6 backdrop-blur-md ${
+        isDarkMode ? 'bg-black/20' : 'bg-white/20'
+      }`}>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
         {stats.loading ? (
           <div className="grid grid-cols-3 gap-4">
@@ -140,7 +142,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLo
               <div
                 key={card.id}
                 onClick={() => onNavigate(card.id as Page)}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 cursor-pointer border border-gray-100"
+                className={`backdrop-blur-md rounded-2xl p-6 shadow-sm hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 cursor-pointer border ${
+                  isDarkMode ? 'bg-black/20 border-white/10' : 'bg-white/20 border-gray-900/10'
+                }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-center space-x-4">

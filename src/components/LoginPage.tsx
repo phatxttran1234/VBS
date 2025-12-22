@@ -31,13 +31,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onBack, onCoachLogin, onAd
   };
 
   return (
-    <div className="min-h-screen flex flex-col px-6 py-12 relative overflow-hidden z-10">
+    <div className="min-h-screen flex flex-col px-6 py-12 relative">
       
       {/* Header */}
-      <div className="relative z-10 flex items-center mb-8">
+      <div className="relative flex items-center mb-8">
         <button
           onClick={onBack}
-          className="p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200"
+          className={`p-2 rounded-full backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-200 ${
+            isDarkMode ? 'bg-black/20 text-white' : 'bg-white/20 text-gray-900'
+          }`}
         >
           <ArrowLeft className="w-6 h-6 text-gray-600" />
         </button>
@@ -47,11 +49,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onBack, onCoachLogin, onAd
       </div>
 
       {/* Login Options */}
-      <div className="relative z-10 flex-1 flex items-center justify-center">
+      <div className="relative flex-1 flex items-center justify-center">
         {!showAdminForm ? (
           <div className="w-full max-w-sm space-y-4">
             {/* Coach Login Button */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8">
+            <div className={`backdrop-blur-md rounded-3xl shadow-xl p-8 ${
+              isDarkMode ? 'bg-black/20' : 'bg-white/20'
+            }`}>
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-white" />
@@ -68,7 +72,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onBack, onCoachLogin, onAd
             </div>
 
             {/* Admin Login Button */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8">
+            <div className={`backdrop-blur-md rounded-3xl shadow-xl p-8 ${
+              isDarkMode ? 'bg-black/20' : 'bg-white/20'
+            }`}>
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-8 h-8 text-white" />
@@ -86,7 +92,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onBack, onCoachLogin, onAd
           </div>
         ) : showAdminForm ? (
           /* Admin Login Form */
-          <div className={`w-full max-w-sm bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 transition-all duration-300 ${isShaking ? 'animate-shake' : ''}`}>
+          <div className={`w-full max-w-sm backdrop-blur-md rounded-3xl shadow-xl p-8 transition-all duration-300 ${
+            isDarkMode ? 'bg-black/20' : 'bg-white/20'
+          } ${isShaking ? 'animate-shake' : ''}`}>
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-white" />
