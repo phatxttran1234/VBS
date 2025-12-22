@@ -1,0 +1,28 @@
+{
+  "name": "VBS - Volleyball Study System",
+  "short_name": "VBS",
+  "description": "Master volleyball techniques and terminology",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/Screenshot 2025-11-21 at 15.51.53.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Screenshot 2025-11-21 at 15.51.53.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "sports"],
+  "lang": "en",
+  "dir": "ltr"
+}
