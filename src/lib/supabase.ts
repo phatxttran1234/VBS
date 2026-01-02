@@ -282,7 +282,7 @@ export const getVideoDrills = async () => {
     .from('video_drills')
     .select(`
       *,
-      categories(*)
+      categories:category_id(*)
     `)
     .order('created_at', { ascending: false });
   return { data, error };
@@ -317,7 +317,7 @@ export const createVideoDrill = async (drill: Omit<VideoDrill, 'id' | 'created_a
       .insert(cleanDrill)
       .select(`
         *,
-        categories(*)
+        categories:category_id(*)
       `)
       .single();
       
@@ -352,7 +352,7 @@ export const updateVideoDrill = async (id: string, updates: Partial<VideoDrill>)
       .eq('id', id)
       .select(`
         *,
-        categories(*)
+        categories:category_id(*)
       `)
       .single();
       
