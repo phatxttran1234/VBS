@@ -112,3 +112,36 @@ button {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+/* JotForm Chat Bot positioning for mobile */
+@media (max-width: 768px) {
+  #jotformAgentPopup,
+  [id*="jotform"][id*="agent"],
+  [class*="jotform"][class*="agent"],
+  .jotform-agent-chatwidget,
+  #jfAgentChatWidget,
+  div[data-testid="chat-widget"] {
+    bottom: 80px !important;
+    right: 8px !important;
+    z-index: 40 !important;
+  }
+
+  iframe[src*="jotfor.ms"],
+  iframe[src*="jotform"] {
+    bottom: 80px !important;
+    right: 8px !important;
+  }
+}
+
+/* Larger screens - keep original position */
+@media (min-width: 769px) {
+  #jotformAgentPopup,
+  [id*="jotform"][id*="agent"],
+  [class*="jotform"][class*="agent"],
+  .jotform-agent-chatwidget,
+  #jfAgentChatWidget,
+  div[data-testid="chat-widget"] {
+    bottom: 20px !important;
+    right: 20px !important;
+  }
+}

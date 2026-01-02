@@ -6,26 +6,23 @@ interface ChatBotProps {
 
 export const ChatBot: React.FC<ChatBotProps> = ({ className = '' }) => {
   useEffect(() => {
-    // Check if the script is already loaded
     const existingScript = document.querySelector('script[src*="jotfor.ms/agent/embedjs"]');
-    
+
     if (!existingScript) {
       const script = document.createElement('script');
       script.src = 'https://cdn.jotfor.ms/agent/embedjs/01983f41eaeb74d98cfb9acd71a3b873ff5d/embed.js?isVoice=1';
       script.async = true;
-      
-      // Add error handling
+
       script.onerror = () => {
         console.warn('Failed to load chat bot script');
       };
-      
+
       script.onload = () => {
-        console.log('Chat bot script loaded successfully');
+        repositionChatWidget();
       };
-      
+
       document.head.appendChild(script);
-      
-      // Cleanup function to remove script when component unmounts
+
       return () => {
         if (script.parentNode) {
           script.parentNode.removeChild(script);
@@ -34,9 +31,50 @@ export const ChatBot: React.FC<ChatBotProps> = ({ className = '' }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const repositionInterval = setInterval(repositionChatWidget, 500);
+
+    const handleResize = () => repositionChatWidget();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearInterval(repositionInterval);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const repositionChatWidget = () => {
+    const isMobile = window.innerWidth <= 768;
+    const bottomOffset = isMobile ? '80px' : '20px';
+    const rightOffset = isMobile ? '8px' : '20px';
+
+    const selectors = [
+      '#jotformAgentPopup',
+      '[id*="jotform"][id*="agent"]',
+      '[class*="jotform"][class*="agent"]',
+      '.jotform-agent-chatwidget',
+      '#jfAgentChatWidget',
+      'iframe[src*="jotfor.ms"]',
+      'iframe[src*="jotform"]'
+    ];
+
+    selectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        const htmlEl = el as HTMLElement;
+        if (htmlEl.style) {
+          htmlEl.style.setProperty('bottom', bottomOffset, 'important');
+          htmlEl.style.setProperty('right', rightOffset, 'important');
+          if (isMobile) {
+            htmlEl.style.setProperty('z-index', '40', 'important');
+          }
+        }
+      });
+    });
+  };
+
   return (
     <div className={`chat-bot-container ${className}`}>
-      {/* The chat bot will be injected here by the script */}
     </div>
   );
 };
