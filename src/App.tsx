@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
-import Particles from './components/Particles';
+import { BackgroundPaths } from './components/ui/background-paths';
 import { LandingPage } from './components/LandingPage';
 import { LoginPage } from './components/LoginPage';
 import { PlayerDashboard } from './components/PlayerDashboard';
@@ -217,27 +217,12 @@ function AppContent() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-dark-bg via-dark-bg-light to-dark-bg-lighter' 
-        : 'bg-gradient-to-br from-logo-blue-bg via-logo-blue-lightest to-blue-50'
-    } ${isDarkMode ? 'dark' : ''}`}>
-      {/* Particle Background */}
-      <Particles 
-        particleCount={120}
-        particleSpread={12}
-        speed={0.03}
-        particleColors={isDarkMode ? ['#3b82f6', '#6366f1', '#8b5cf6'] : ['#60a5fa', '#93c5fd', '#dbeafe']}
-        moveParticlesOnHover={true}
-        particleHoverFactor={0.3}
-        alphaParticles={true}
-        particleBaseSize={60}
-        sizeRandomness={0.6}
-        cameraDistance={25}
-        disableRotation={false}
-        pixelRatio={Math.min(window.devicePixelRatio, 2)}
-      />
-      {renderPage()}
+    <div className={`${isDarkMode ? 'dark' : ''}`}>
+      <BackgroundPaths className="fixed inset-0">
+        <div className="relative z-10 min-h-screen">
+          {renderPage()}
+        </div>
+      </BackgroundPaths>
       <ChatBot />
     </div>
   );

@@ -19,13 +19,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onPlayerJoin, onCoachL
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden z-10">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative z-10">
       {/* Theme Toggle */}
       <div className="absolute top-6 right-6 z-20">
         <ThemeToggle />
       </div>
       
-      <div className={`relative z-10 text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      <div className={`relative text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         {/* Logo and Title */}
         <div className="mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl shadow-lg mb-6 overflow-hidden">
@@ -86,10 +86,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onPlayerJoin, onCoachL
           
           <button
             onClick={onCoachLogin}
-            className={`w-full backdrop-blur-sm py-4 px-6 rounded-2xl font-semibold text-lg border transform hover:scale-[1.02] transition-all duration-200 ${
+            className={`w-full backdrop-blur-md py-4 px-6 rounded-2xl font-semibold text-lg border transform hover:scale-[1.02] transition-all duration-200 ${
               isDarkMode 
-                ? 'bg-dark-bg-light/80 text-dark-text border-dark-bg-lighter hover:bg-dark-bg-light hover:shadow-lg' 
-                : 'bg-white/80 text-gray-700 border-gray-200 hover:bg-white hover:shadow-lg'
+                ? 'bg-black/20 text-white border-white/20 hover:bg-black/30 hover:shadow-lg' 
+                : 'bg-white/20 text-gray-900 border-gray-900/20 hover:bg-white/30 hover:shadow-lg'
             } ${isVisible ? 'animate-fade-in-up' : ''}`}
             style={{ animationDelay: '0.4s' }}
           >
