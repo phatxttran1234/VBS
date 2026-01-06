@@ -160,8 +160,14 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
                 key={drill.id}
                 className="group bg-[#0f1729] border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="aspect-video bg-gradient-to-br from-gray-800/50 to-gray-900/50 flex items-center justify-center border-b border-gray-800">
+                <div className="relative aspect-video bg-gradient-to-br from-gray-800/50 to-gray-900/50 flex items-center justify-center border-b border-gray-800">
                   <Target className="w-12 h-12 text-gray-600 group-hover:text-cyan-400 transition-colors" />
+                  {drill.video_url && (
+                    <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-md flex items-center gap-1 text-xs font-semibold shadow-lg">
+                      <Play className="w-3 h-3 fill-current" />
+                      VIDEO
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-5">
