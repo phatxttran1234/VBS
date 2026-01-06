@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Loader2, ArrowLeft, Target, Clock, Filter } from 'lucide-react';
+import { Loader2, ArrowLeft, Target, Clock, Filter, Play } from 'lucide-react';
 import DrillDetailModal from './DrillDetailModal';
 
 interface Drill {
