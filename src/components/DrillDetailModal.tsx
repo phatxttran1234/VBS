@@ -38,14 +38,7 @@ export default function DrillDetailModal({ drill, onClose }: DrillDetailModalPro
               <X className="w-6 h-6" />
             </button>
 
-            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 p-12 border-b border-gray-800">
-              <div className="aspect-video bg-gray-800/50 rounded-xl flex items-center justify-center mb-6">
-                <div className="text-center">
-                  <Target className="w-16 h-16 text-gray-600 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">Drill Diagram</p>
-                </div>
-              </div>
-
+            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 p-8 border-b border-gray-800">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="inline-block px-3 py-1 text-xs font-semibold text-blue-400 bg-blue-400/10 rounded-full mb-3">
