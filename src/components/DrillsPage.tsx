@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { ChevronDown, ChevronUp, Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Target, Clock, Filter } from 'lucide-react';
+import DrillDetailModal from './DrillDetailModal';
 
 interface Drill {
   id: string;
@@ -13,10 +14,14 @@ interface Drill {
   execution?: string;
   coaching_tips?: string;
   reps?: string;
+  difficulty?: string;
+  equipment?: string;
   order_index: number;
 }
 
 const AGE_GROUPS = ['U12', 'U14', 'U16', 'U18'];
+const CATEGORIES = ['All', 'Warm-up', 'Agility', 'Passing', 'Spiking', 'Setting', 'Serving', 'Other'];
+const DIFFICULTIES = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
 interface DrillsPageProps {
   onBack?: () => void;
@@ -26,7 +31,10 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>('U12');
   const [drills, setDrills] = useState<Drill[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedDrill, setExpandedDrill] = useState<string | null>(null);
+  const [selectedDrill, setSelectedDrill] = useState<Drill | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
+  const [equipmentFilter, setEquipmentFilter] = useState<string>('');
 
   useEffect(() => {
     fetchDrills();
@@ -35,7 +43,6 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
   const fetchDrills = async () => {
     setLoading(true);
     try {
-      console.log('Fetching drills for age group:', selectedAgeGroup);
       const { data, error } = await supabase
         .from('drills')
         .select('*')
@@ -43,11 +50,7 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
         .order('category')
         .order('order_index');
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      console.log('Fetched drills:', data?.length, 'drills');
+      if (error) throw error;
       setDrills(data || []);
     } catch (error) {
       console.error('Error fetching drills:', error);
@@ -56,44 +59,39 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
     }
   };
 
-  const groupedDrills = drills.reduce((acc, drill) => {
-    if (!acc[drill.category]) {
-      acc[drill.category] = [];
-    }
-    acc[drill.category].push(drill);
-    return acc;
-  }, {} as Record<string, Drill[]>);
-
-  const toggleDrill = (drillId: string) => {
-    setExpandedDrill(expandedDrill === drillId ? null : drillId);
-  };
+  const filteredDrills = drills.filter((drill) => {
+    if (selectedCategory !== 'All' && drill.category !== selectedCategory) return false;
+    if (selectedDifficulty !== 'All' && drill.difficulty !== selectedDifficulty) return false;
+    if (equipmentFilter && !drill.equipment?.toLowerCase().includes(equipmentFilter.toLowerCase())) return false;
+    return true;
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
-      <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-[#0a0f1e] pb-20">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex items-center gap-4 mb-6">
           {onBack && (
             <button
               onClick={onBack}
-              className="p-2 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
           )}
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-4xl font-bold text-white">
             Training Drills
           </h1>
         </div>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
           {AGE_GROUPS.map((group) => (
             <button
               key={group}
               onClick={() => setSelectedAgeGroup(group)}
-              className={`px-6 py-2.5 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              className={`px-8 py-3 rounded-xl font-bold transition-all whitespace-nowrap ${
                 selectedAgeGroup === group
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/50'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-white'
               }`}
             >
               {group}
@@ -101,103 +99,116 @@ export default function DrillsPage({ onBack }: DrillsPageProps) {
           ))}
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <div className="sticky top-0 z-10 bg-[#0f1729] border border-gray-800 rounded-xl p-4 mb-6 shadow-xl backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="w-5 h-5 text-cyan-400" />
+            <h3 className="text-lg font-semibold text-white">Filters</h3>
           </div>
-        ) : Object.keys(groupedDrills).length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-600 dark:text-gray-400">
-              No drills available for {selectedAgeGroup} yet.
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Skill</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-white focus:border-blue-500 focus:outline-none transition-colors"
+              >
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Difficulty</label>
+              <select
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-white focus:border-blue-500 focus:outline-none transition-colors"
+              >
+                {DIFFICULTIES.map((diff) => (
+                  <option key={diff} value={diff}>{diff}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Equipment</label>
+              <input
+                type="text"
+                placeholder="Search equipment..."
+                value={equipmentFilter}
+                onChange={(e) => setEquipmentFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-colors"
+              />
+            </div>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin text-cyan-400" />
+          </div>
+        ) : filteredDrills.length === 0 ? (
+          <div className="bg-gray-800/30 border border-gray-800 rounded-xl p-12 text-center">
+            <p className="text-gray-400 text-lg">
+              No drills match your filters for {selectedAgeGroup}.
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {Object.entries(groupedDrills).map(([category, categoryDrills]) => (
-              <div key={category} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4">
-                  <h2 className="text-2xl font-extrabold text-white tracking-wide uppercase">{category}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredDrills.map((drill) => (
+              <div
+                key={drill.id}
+                className="group bg-[#0f1729] border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="aspect-video bg-gradient-to-br from-gray-800/50 to-gray-900/50 flex items-center justify-center border-b border-gray-800">
+                  <Target className="w-12 h-12 text-gray-600 group-hover:text-cyan-400 transition-colors" />
                 </div>
-                <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {categoryDrills.map((drill) => (
-                    <div key={drill.id}>
-                      <button
-                        onClick={() => toggleDrill(drill.id)}
-                        className="w-full px-4 py-4 flex items-start justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <div className="flex-1 text-left">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                            {drill.title}
-                          </h3>
-                          {drill.duration && (
-                            <span className="inline-block px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded">
-                              {drill.duration}
-                            </span>
-                          )}
-                        </div>
-                        {expandedDrill === drill.id ? (
-                          <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
-                        )}
-                      </button>
 
-                      {expandedDrill === drill.id && (
-                        <div className="px-4 pb-4 space-y-4 text-gray-700 dark:text-gray-300">
-                          {drill.description && (
-                            <div>
-                              <h4 className="font-semibold text-red-600 dark:text-red-500 mb-2">
-                                Description
-                              </h4>
-                              <p className="whitespace-pre-wrap">{drill.description}</p>
-                            </div>
-                          )}
+                <div className="p-5">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold text-blue-400 bg-blue-400/10 rounded-full mb-3">
+                    {drill.category}
+                  </span>
 
-                          {drill.setup && (
-                            <div>
-                              <h4 className="font-semibold text-red-600 dark:text-red-500 mb-2">
-                                Setup
-                              </h4>
-                              <p className="whitespace-pre-wrap">{drill.setup}</p>
-                            </div>
-                          )}
+                  <h3 className="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-cyan-400 transition-colors">
+                    {drill.title}
+                  </h3>
 
-                          {drill.execution && (
-                            <div>
-                              <h4 className="font-semibold text-red-600 dark:text-red-500 mb-2">
-                                Execution
-                              </h4>
-                              <p className="whitespace-pre-wrap">{drill.execution}</p>
-                            </div>
-                          )}
+                  <div className="flex items-center justify-between mb-4">
+                    {drill.duration && (
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <Clock className="w-4 h-4" />
+                        <span className="text-sm font-medium">{drill.duration}</span>
+                      </div>
+                    )}
+                    {drill.difficulty && (
+                      <span className={`px-2 py-1 text-xs font-semibold rounded ${
+                        drill.difficulty === 'Beginner' ? 'bg-green-400/10 text-green-400' :
+                        drill.difficulty === 'Intermediate' ? 'bg-yellow-400/10 text-yellow-400' :
+                        'bg-red-400/10 text-red-400'
+                      }`}>
+                        {drill.difficulty}
+                      </span>
+                    )}
+                  </div>
 
-                          {drill.coaching_tips && (
-                            <div>
-                              <h4 className="font-semibold text-red-600 dark:text-red-500 mb-2">
-                                Coaching Tips
-                              </h4>
-                              <p className="whitespace-pre-wrap">{drill.coaching_tips}</p>
-                            </div>
-                          )}
-
-                          {drill.reps && (
-                            <div>
-                              <h4 className="font-semibold text-red-600 dark:text-red-500 mb-2">
-                                Reps
-                              </h4>
-                              <p className="whitespace-pre-wrap">{drill.reps}</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  <button
+                    onClick={() => setSelectedDrill(drill)}
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
+                  >
+                    View Drill
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {selectedDrill && (
+        <DrillDetailModal
+          drill={selectedDrill}
+          onClose={() => setSelectedDrill(null)}
+        />
+      )}
     </div>
   );
 }
