@@ -1,4 +1,5 @@
 import { X, Clock, Target, Dumbbell, Lightbulb } from 'lucide-react';
+import { parseVideoUrl } from '../utils/videoEmbed';
 
 interface Drill {
   id: string;
@@ -13,6 +14,7 @@ interface Drill {
   reps?: string;
   difficulty?: string;
   equipment?: string;
+  video_url?: string;
 }
 
 interface DrillDetailModalProps {
@@ -68,6 +70,42 @@ export default function DrillDetailModal({ drill, onClose }: DrillDetailModalPro
             </div>
 
             <div className="p-8 space-y-6">
+              {drill.video_url && (() => {
+                const videoInfo = parseVideoUrl(drill.video_url);
+                return videoInfo.isValid && (
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">Video Demonstration</h3>
+                    <div className="aspect-video bg-black rounded-xl overflow-hidden border border-gray-800">
+                      {videoInfo.type === 'youtube' && (
+                        <iframe
+                          src={videoInfo.embedUrl}
+                          className="w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      )}
+                      {videoInfo.type === 'instagram' && (
+                        <iframe
+                          src={videoInfo.embedUrl}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          scrolling="no"
+                          allowTransparency
+                        />
+                      )}
+                      {videoInfo.type === 'tiktok' && (
+                        <iframe
+                          src={videoInfo.embedUrl}
+                          className="w-full h-full"
+                          allow="encrypted-media;"
+                          allowFullScreen
+                        />
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {drill.description && (
                 <div>
                   <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">

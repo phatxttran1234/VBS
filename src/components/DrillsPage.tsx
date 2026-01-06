@@ -17,6 +17,7 @@ interface Drill {
   difficulty?: string;
   equipment?: string;
   order_index: number;
+  video_url?: string;
 }
 
 const AGE_GROUPS = ['U12', 'U14', 'U16', 'U18'];
