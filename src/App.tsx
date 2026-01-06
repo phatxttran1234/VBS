@@ -15,12 +15,10 @@ import AdminVideoDrills from './components/AdminVideoDrills';
 import DrillsPage from './components/DrillsPage';
 import AdminDrillsPage from './components/AdminDrillsPage';
 import { ChatBot } from './components/ChatBot';
-import { MediaFeedPage } from './components/feed/MediaFeedPage';
 
 export type Page =
   | 'landing'
   | 'login'
-  | 'feed'
   | 'player-dashboard'
   | 'admin-dashboard'
   | 'vocabulary'
@@ -78,13 +76,11 @@ function AppContent() {
     switch (currentPage) {
       case 'landing':
         return (
-          <LandingPage
-            onPlayerJoin={() => navigateTo('feed')}
+          <LandingPage 
+            onPlayerJoin={() => navigateTo('login')}
             onCoachLogin={() => navigateTo('login')}
           />
         );
-      case 'feed':
-        return <MediaFeedPage />;
       case 'login':
         return (
           <LoginPage 
