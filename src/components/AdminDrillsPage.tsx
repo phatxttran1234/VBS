@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, Edit2, Trash2, Save, X, Loader2, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import { parseVideoUrl } from '../utils/videoEmbed';
 
 interface Drill {
   id: string;
@@ -14,6 +15,7 @@ interface Drill {
   coaching_tips?: string;
   reps?: string;
   order_index: number;
+  video_url?: string;
 }
 
 interface DrillForm {
@@ -27,6 +29,7 @@ interface DrillForm {
   coaching_tips: string;
   reps: string;
   order_index: number;
+  video_url: string;
 }
 
 const AGE_GROUPS = ['U12', 'U14', 'U16', 'U18'];
@@ -43,6 +46,7 @@ const initialFormState: DrillForm = {
   coaching_tips: '',
   reps: '',
   order_index: 0,
+  video_url: '',
 };
 
 interface AdminDrillsPageProps {
@@ -132,6 +136,7 @@ export default function AdminDrillsPage({ onBack }: AdminDrillsPageProps) {
       coaching_tips: drill.coaching_tips || '',
       reps: drill.reps || '',
       order_index: drill.order_index,
+      video_url: drill.video_url || '',
     });
     setEditingId(drill.id);
     setShowForm(true);
@@ -339,6 +344,22 @@ export default function AdminDrillsPage({ onBack }: AdminDrillsPageProps) {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  YouTube Video Link
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={form.video_url}
+                  onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Optional: Add a YouTube link to show a video demonstration
+                </p>
+              </div>
+
               <div className="flex gap-3">
                 <button
                   type="submit"
@@ -448,6 +469,44 @@ export default function AdminDrillsPage({ onBack }: AdminDrillsPageProps) {
 
                       {expandedDrill === drill.id && (
                         <div className="px-4 pb-4 space-y-4 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-4">
+                          {drill.video_url && (() => {
+                            const videoInfo = parseVideoUrl(drill.video_url);
+                            return videoInfo.isValid && (
+                              <div>
+                                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                                  Video Demonstration
+                                </h4>
+                                <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                                  {videoInfo.type === 'youtube' && (
+                                    <iframe
+                                      src={videoInfo.embedUrl}
+                                      className="w-full h-full"
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  )}
+                                  {videoInfo.type === 'instagram' && (
+                                    <iframe
+                                      src={videoInfo.embedUrl}
+                                      className="w-full h-full"
+                                      frameBorder="0"
+                                      scrolling="no"
+                                      allowTransparency
+                                    />
+                                  )}
+                                  {videoInfo.type === 'tiktok' && (
+                                    <iframe
+                                      src={videoInfo.embedUrl}
+                                      className="w-full h-full"
+                                      allow="encrypted-media;"
+                                      allowFullScreen
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })()}
+
                           {drill.description && (
                             <div>
                               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
